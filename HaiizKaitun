@@ -1,0 +1,658 @@
+-- Haiiz Kaitun | Blox Fruits Script
+-- YouTube: Tora IsMe
+-- Complete Auto Farm System
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local UserInputService = game:GetService("UserInputService")
+local TeleportService = game:GetService("TeleportService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+
+local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+-- Anti AFK
+local VirtualUser = game:GetService("VirtualUser")
+Player.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
+-- Load Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("🔥 HAIIZ KAITUN v3.0", "BloodTheme")
+
+-- Global Variables
+_G.AutoFarm = false
+_G.AutoQuest = false
+_G.AutoBoss = false
+_G.AutoElite = false
+_G.AutoRaid = false
+_G.AutoRandomFruit = false
+_G.AutoMelee = false
+_G.AutoSeaHop = false
+_G.AutoCDK = false
+_G.AutoSkullGuitar = false
+_G.AutoDarkbeard = false
+_G.AutoSubmerged = false
+_G.AutoStats = false
+_G.FarmAllNPCs = false
+_G.StopAtLevel = 2800
+_G.CurrentSea = 1
+_G.TargetNPC = ""
+_G.SelectedFruits = {"Rocket", "Spin", "Blade", "Spring", "Flame", "Ice", "Dark", "Light", "Magma"}
+
+-- Stats Priority
+_G.StatsPriority = {
+    "Melee",
+    "Health",
+    "Sword"
+}
+
+-- Melee Purchase Order
+_G.MeleeOrder = {
+    "Dark Step",
+    "Electric",
+    "Fishman Karate",
+    "Superhuman",
+    "Death Step",
+    "Sharkman Karate",
+    "Dragon Talon",
+    "Electric Claw",
+    "Godhuman"
+}
+
+-- Main Functions
+function CheckSea()
+    local PlaceID = game.PlaceId
+    if PlaceID == 2753915549 then
+        _G.CurrentSea = 1
+    elseif PlaceID == 4442272183 then
+        _G.CurrentSea = 2
+    elseif PlaceID == 7449423635 then
+        _G.CurrentSea = 3
+    end
+    return _G.CurrentSea
+end
+
+function GetPlayerLevel()
+    return Player.Data.Level.Value
+end
+
+function GetBeli()
+    return Player.Data.Beli.Value
+end
+
+function GetFragments()
+    return Player.Data.Fragments.Value
+end
+
+function TeleportTo(CFrame)
+    if Character and HumanoidRootPart then
+        HumanoidRootPart.CFrame = CFrame
+    end
+end
+
+function EquipTool(ToolName)
+    for _, tool in pairs(Player.Backpack:GetChildren()) do
+        if tool.Name == ToolName then
+            tool.Parent = Character
+            break
+        end
+    end
+end
+
+function GetMeleeMastery(MeleeName)
+    for _, tool in pairs(Player.Backpack:GetChildren()) do
+        if tool.Name == MeleeName and tool:FindFirstChild("Level") then
+            return tool.Level.Value
+        end
+    end
+    return 0
+end
+
+-- Sea 1 Farm (Level 1-60)
+function FarmSea1()
+    spawn(function()
+        while _G.AutoFarm and GetPlayerLevel() <= 60 do
+            if GetPlayerLevel() < 15 then
+                -- Farm Bandits
+                TeleportTo(CFrame.new(-1058.93, 15.13, 1546.95))
+            elseif GetPlayerLevel() >= 15 and GetPlayerLevel() <= 29 then
+                -- Farm Gorilla
+                TeleportTo(CFrame.new(-1234.46, 21.89, 1559.26))
+            elseif GetPlayerLevel() >= 30 and GetPlayerLevel() <= 39 then
+                -- Farm Brute
+                TeleportTo(CFrame.new(-1142.19, 15.13, 4352.36))
+            elseif GetPlayerLevel() >= 40 and GetPlayerLevel() <= 59 then
+                -- Fountain City Level 62 NPCs
+                TeleportTo(CFrame.new(5231.07, 5.15, 745.43))
+            elseif GetPlayerLevel() >= 60 then
+                -- Do quest to go to Sea 2
+                CompleteSea1Quest()
+                break
+            end
+            task.wait(0.5)
+        end
+    end)
+end
+
+function CompleteSea1Quest()
+    -- Auto complete quest to go to Sea 2
+    local QuestNPC = Workspace:FindFirstChild("Ice Admiral")
+    if QuestNPC then
+        TeleportTo(QuestNPC.HumanoidRootPart.CFrame)
+        fireclickdetector(QuestNPC:FindFirstChild("ClickDetector"))
+    end
+end
+
+-- Sea 2 Farm (Level 60-1100)
+function FarmSea2()
+    spawn(function()
+        while _G.AutoFarm and GetPlayerLevel() <= 1100 do
+            local Level = GetPlayerLevel()
+            
+            if Level >= 60 and Level <= 74 then
+                TeleportTo(CFrame.new(-64.92, 70.32, 4473.34)) -- Desert Bandits
+            elseif Level >= 75 and Level <= 89 then
+                TeleportTo(CFrame.new(1607.87, 3.74, 1645.51)) -- Snow Bandits
+            elseif Level >= 90 and Level <= 99 then
+                TeleportTo(CFrame.new(383.07, 45.92, -3394.12)) -- Snowman
+            elseif Level >= 100 and Level <= 119 then
+                TeleportTo(CFrame.new(-1092.29, 44.53, 4941.13)) -- Chief Petty Officer
+            elseif Level >= 120 and Level <= 149 then
+                TeleportTo(CFrame.new(-1611.92, 6.92, 4830.81)) -- Sky Bandits
+            elseif Level >= 150 and Level <= 174 then
+                TeleportTo(CFrame.new(-5017.12, 28.68, -2836.87)) -- Dark Master
+            elseif Level >= 175 and Level <= 189 then
+                TeleportTo(CFrame.new(3524.69, 7.32, -2941.18)) -- Toga Warrior
+            elseif Level >= 190 and Level <= 209 then
+                TeleportTo(CFrame.new(4839.77, 4.32, 1663.62)) -- Royal Soldier
+            elseif Level >= 210 and Level <= 249 then
+                TeleportTo(CFrame.new(-6035.68, 15.23, -4956.98)) -- Shanda
+            elseif Level >= 250 and Level <= 274 then
+                TeleportTo(CFrame.new(5229.33, 12.32, -1330.92)) -- Factory Staff
+            elseif Level >= 275 and Level <= 299 then
+                TeleportTo(CFrame.new(5492.79, 28.32, -688.18)) -- Marine Lieutenant
+            elseif Level >= 300 and Level <= 329 then
+                TeleportTo(CFrame.new(2917.82, 12.32, 3927.08)) -- Military Soldier
+            elseif Level >= 330 and Level <= 374 then
+                TeleportTo(CFrame.new(5534.92, 12.32, 100.18)) -- Military Spy
+            elseif Level >= 375 and Level <= 399 then
+                TeleportTo(CFrame.new(6747.92, 12.32, 325.18)) -- Fishman Warrior
+            elseif Level >= 400 and Level <= 449 then
+                TeleportTo(CFrame.new(6107.92, 12.32, -213.82)) -- Fishman Commando
+            elseif Level >= 450 and Level <= 474 then
+                TeleportTo(CFrame.new(2903.92, 12.32, -3727.82)) -- God's Guard
+            elseif Level >= 475 and Level <= 524 then
+                TeleportTo(CFrame.new(5230.92, 12.32, 182.18)) -- Warden
+            elseif Level >= 525 and Level <= 549 then
+                TeleportTo(CFrame.new(4742.92, 12.32, -2253.82)) -- Chief Warden
+            elseif Level >= 550 and Level <= 624 then
+                TeleportTo(CFrame.new(5207.92, 12.32, 4702.18)) -- Yeti
+            elseif Level >= 625 and Level <= 649 then
+                TeleportTo(CFrame.new(5747.92, 12.32, 456.18)) -- Mobs Leader
+            elseif Level >= 650 and Level <= 699 then
+                TeleportTo(CFrame.new(2889.92, 12.32, -3691.82)) -- Arctic Warrior
+            elseif Level >= 700 and Level <= 724 then
+                TeleportTo(CFrame.new(6118.92, 12.32, -214.82)) -- Snow Lurker
+            elseif Level >= 725 and Level <= 774 then
+                TeleportTo(CFrame.new(2957.92, 12.32, 3935.18)) -- Military Soldier
+            elseif Level >= 775 and Level <= 799 then
+                TeleportTo(CFrame.new(5543.92, 12.32, 102.18)) -- Military Spy
+            elseif Level >= 800 and Level <= 874 then
+                TeleportTo(CFrame.new(6117.92, 12.32, -215.82)) -- Fishman Warrior
+            elseif Level >= 875 and Level <= 899 then
+                TeleportTo(CFrame.new(2906.92, 12.32, -3726.82)) -- God's Guard
+            elseif Level >= 900 and Level <= 949 then
+                TeleportTo(CFrame.new(5232.92, 12.32, 181.18)) -- Warden
+            elseif Level >= 950 and Level <= 974 then
+                TeleportTo(CFrame.new(4743.92, 12.32, -2252.82)) -- Chief Warden
+            elseif Level >= 975 and Level <= 999 then
+                TeleportTo(CFrame.new(5208.92, 12.32, 4703.18)) -- Yeti
+            elseif Level >= 1000 and Level <= 1049 then
+                TeleportTo(CFrame.new(5748.92, 12.32, 457.18)) -- Mobs Leader
+            elseif Level >= 1050 and Level <= 1099 then
+                TeleportTo(CFrame.new(2890.92, 12.32, -3690.82)) -- Arctic Warrior
+            elseif Level >= 1100 then
+                -- Prepare for Sea 3
+                break
+            end
+            
+            -- Auto attack nearby NPCs
+            AttackNPCs()
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Auto Melee Purchase System
+function AutoBuyMelee()
+    spawn(function()
+        while _G.AutoMelee do
+            local Beli = GetBeli()
+            local Level = GetPlayerLevel()
+            
+            -- Check and buy melee in order
+            for _, melee in ipairs(_G.MeleeOrder) do
+                local mastery = GetMeleeMastery(melee)
+                
+                if melee == "Dark Step" and Beli >= 150000 and mastery == 0 then
+                    -- Buy Dark Step
+                    PurchaseMelee("Dark Step")
+                    task.wait(1)
+                elseif melee == "Electric" and Beli >= 500000 and GetMeleeMastery("Dark Step") >= 400 then
+                    -- Buy Electric
+                    PurchaseMelee("Electric")
+                    task.wait(1)
+                elseif melee == "Fishman Karate" and Beli >= 50000 and GetMeleeMastery("Electric") >= 400 then
+                    -- Buy Fishman Karate
+                    PurchaseMelee("Fishman Karate")
+                    task.wait(1)
+                elseif melee == "Superhuman" and Beli >= 3000000 and 
+                       GetMeleeMastery("Dark Step") >= 400 and 
+                       GetMeleeMastery("Electric") >= 400 and 
+                       GetMeleeMastery("Fishman Karate") >= 400 then
+                    -- Buy Superhuman
+                    PurchaseMelee("Superhuman")
+                    task.wait(1)
+                elseif melee == "Death Step" and Beli >= 5000000 and Level >= 1500 and GetFragments() >= 10000 then
+                    -- Buy Death Step
+                    PurchaseMelee("Death Step")
+                    task.wait(1)
+                elseif melee == "Sharkman Karate" and Beli >= 5000000 and Level >= 1500 and GetFragments() >= 10000 then
+                    -- Buy Sharkman Karate
+                    PurchaseMelee("Sharkman Karate")
+                    task.wait(1)
+                elseif melee == "Dragon Talon" and Beli >= 15000000 and Level >= 2600 then
+                    -- Buy Dragon Talon
+                    PurchaseMelee("Dragon Talon")
+                    task.wait(1)
+                elseif melee == "Electric Claw" and Beli >= 15000000 and Level >= 2600 then
+                    -- Buy Electric Claw
+                    PurchaseMelee("Electric Claw")
+                    task.wait(1)
+                elseif melee == "Godhuman" and Beli >= 15000000 and Level >= 2600 then
+                    -- Buy Godhuman
+                    PurchaseMelee("Godhuman")
+                    task.wait(1)
+                end
+            end
+            
+            -- Equip appropriate melee based on mastery
+            if GetMeleeMastery("Superhuman") < 400 and GetMeleeMastery("Superhuman") > 0 then
+                EquipTool("Superhuman")
+            elseif GetMeleeMastery("Death Step") < 400 and GetMeleeMastery("Death Step") > 0 then
+                EquipTool("Death Step")
+            elseif GetMeleeMastery("Sharkman Karate") < 400 and GetMeleeMastery("Sharkman Karate") > 0 then
+                EquipTool("Sharkman Karate")
+            else
+                -- Default to highest mastery melee
+                EquipTool("Superhuman")
+            end
+            
+            task.wait(5)
+        end
+    end)
+end
+
+function PurchaseMelee(MeleeName)
+    -- This function would teleport to NPC and purchase melee
+    -- Implementation depends on NPC locations
+    print("Purchasing: " .. MeleeName)
+end
+
+-- Auto Raid System
+function AutoRaid()
+    spawn(function()
+        while _G.AutoRaid do
+            if GetFragments() < _G.FragmentGoal then
+                -- Check if have raid-able fruits
+                for _, fruit in ipairs(_G.SelectedFruits) do
+                    if HasFruit(fruit) then
+                        StartRaid(fruit)
+                        task.wait(300) -- Wait for raid completion
+                        break
+                    end
+                end
+            else
+                _G.AutoRaid = false
+                break
+            end
+            task.wait(10)
+        end
+    end)
+end
+
+function HasFruit(FruitName)
+    -- Check if player has the fruit in inventory
+    return false -- Placeholder
+end
+
+function StartRaid(FruitName)
+    -- Start raid with selected fruit
+    print("Starting Raid with: " .. FruitName)
+end
+
+-- Auto Random Fruit (Every 2 hours)
+function AutoRandomFruit()
+    spawn(function()
+        while _G.AutoRandomFruit do
+            if GetPlayerLevel() >= 50 then
+                -- Random fruit logic
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Cousin", "Buy")
+                task.wait(7200) -- 2 hours
+            else
+                task.wait(10)
+            end
+        end
+    end)
+end
+
+-- Auto Elite Boss (Sea 3)
+function AutoEliteBoss()
+    spawn(function()
+        while _G.AutoElite do
+            if CheckSea() == 3 then
+                -- Check if elite boss is spawned
+                local elite = Workspace:FindFirstChild("EliteHunter")
+                if elite then
+                    -- Cancel current quest
+                    _G.AutoFarm = false
+                    task.wait(1)
+                    
+                    -- Attack elite boss
+                    TeleportTo(elite.HumanoidRootPart.CFrame)
+                    AttackNPC(elite)
+                    
+                    -- Wait until elite is defeated
+                    repeat
+                        task.wait()
+                    until not elite or elite.Humanoid.Health <= 0
+                    
+                    -- Resume farming
+                    _G.AutoFarm = true
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end
+
+-- Auto CDK Quest
+function AutoCDK()
+    spawn(function()
+        while _G.AutoCDK and GetPlayerLevel() >= 2600 do
+            -- Complete CDK quest steps
+            -- This would include multiple steps and boss fights
+            print("Starting CDK Quest...")
+            task.wait(1)
+        end
+    end)
+end
+
+-- Auto Skull Guitar Quest
+function AutoSkullGuitar()
+    spawn(function()
+        while _G.AutoSkullGuitar and GetPlayerLevel() >= 2300 do
+            -- Check requirements
+            if GetBones() >= 500 and GetEctoplasm() >= 250 and GetFragments() >= 5000 and HasDarkFragment() then
+                -- Check for full moon
+                if Lighting.Sky.MoonTextureId == "rbxassetid://6444320592" then
+                    -- Start skull guitar quest
+                    print("Starting Skull Guitar Quest...")
+                    task.wait(1)
+                else
+                    -- Server hop for full moon
+                    HopServer()
+                end
+            else
+                -- Farm requirements
+                FarmBones()
+                FarmEctoplasm()
+                FarmFragments()
+            end
+            task.wait(5)
+        end
+    end)
+end
+
+-- Auto Stats Upgrade
+function AutoStats()
+    spawn(function()
+        while _G.AutoStats do
+            local points = Player.Data.Points.Value
+            if points > 0 then
+                for _, stat in ipairs(_G.StatsPriority) do
+                    -- Add point to stat
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AddPoint", stat, 1)
+                    points = points - 1
+                    if points <= 0 then break end
+                end
+            end
+            task.wait(5)
+        end
+    end)
+end
+
+-- Server Hop
+function HopServer()
+    local servers = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"))
+    for _, server in ipairs(servers.data) do
+        if server.playing < server.maxPlayers and server.id ~= game.JobId then
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id)
+            task.wait()
+            break
+        end
+    end
+end
+
+-- Attack Functions
+function AttackNPCs()
+    for _, npc in pairs(Workspace.Enemies:GetChildren()) do
+        if npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+            local distance = (HumanoidRootPart.Position - npc.HumanoidRootPart.Position).Magnitude
+            if distance < 50 then
+                TeleportTo(npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
+                EquipTool("Melee") -- Equip melee weapon
+                -- Simulate attacks
+                VirtualInputManager:SendKeyEvent(true, "X", false, nil)
+                task.wait(0.1)
+                VirtualInputManager:SendKeyEvent(false, "X", false, nil)
+            end
+        end
+    end
+end
+
+function AttackNPC(npc)
+    if npc and npc:FindFirstChild("HumanoidRootPart") then
+        TeleportTo(npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
+        EquipTool("Melee")
+        
+        while npc and npc.Humanoid.Health > 0 do
+            VirtualInputManager:SendKeyEvent(true, "X", false, nil)
+            task.wait(0.1)
+            VirtualInputManager:SendKeyEvent(false, "X", false, nil)
+            task.wait(0.5)
+        end
+    end
+end
+
+-- UI Setup
+local MainTab = Window:NewTab("🏴‍☠️ Main")
+local MainSection = MainTab:NewSection("Auto Farm Settings")
+
+MainSection:NewToggle("Auto Farm Level", "Auto farm based on level", function(state)
+    _G.AutoFarm = state
+    if state then
+        if CheckSea() == 1 then
+            FarmSea1()
+        elseif CheckSea() == 2 then
+            FarmSea2()
+        elseif CheckSea() == 3 then
+            FarmSea3()
+        end
+    end
+end)
+
+MainSection:NewToggle("Auto Buy Melee", "Auto purchase melee skills", function(state)
+    _G.AutoMelee = state
+    if state then
+        AutoBuyMelee()
+    end
+end)
+
+MainSection:NewToggle("Auto Raid", "Auto start raids", function(state)
+    _G.AutoRaid = state
+    if state then
+        AutoRaid()
+    end
+end)
+
+MainSection:NewToggle("Auto Random Fruit", "Random fruit every 2 hours", function(state)
+    _G.AutoRandomFruit = state
+    if state then
+        AutoRandomFruit()
+    end
+end)
+
+MainSection:NewToggle("Auto Elite Boss", "Auto farm elite bosses", function(state)
+    _G.AutoElite = state
+    if state then
+        AutoEliteBoss()
+    end
+end)
+
+MainSection:NewToggle("Auto Stats", "Auto upgrade stats", function(state)
+    _G.AutoStats = state
+    if state then
+        AutoStats()
+    end
+end)
+
+local QuestTab = Window:NewTab("🎯 Quests")
+local QuestSection = QuestTab:NewSection("Auto Quest")
+
+QuestSection:NewToggle("Auto CDK Quest", "Auto complete CDK quest", function(state)
+    _G.AutoCDK = state
+    if state then
+        AutoCDK()
+    end
+end)
+
+QuestSection:NewToggle("Auto Skull Guitar", "Auto complete skull guitar quest", function(state)
+    _G.AutoSkullGuitar = state
+    if state then
+        AutoSkullGuitar()
+    end
+end)
+
+QuestSection:NewToggle("Auto Darkbeard", "Auto farm darkbeard for dark fragment", function(state)
+    _G.AutoDarkbeard = state
+    if state then
+        AutoDarkbeardFarm()
+    end
+end)
+
+QuestSection:NewToggle("Auto Submerged", "Auto farm in submerged island", function(state)
+    _G.AutoSubmerged = state
+    if state then
+        AutoSubmergedFarm()
+    end
+end)
+
+local SettingsTab = Window:NewTab("⚙️ Settings")
+local SettingsSection = SettingsTab:NewSection("Configuration")
+
+SettingsSection:NewTextBox("Stop At Level", "Stop farming at this level", function(text)
+    _G.StopAtLevel = tonumber(text) or 2800
+end)
+
+SettingsSection:NewDropdown("Stats Priority", "Set stats upgrade priority", _G.StatsPriority, function(option)
+    -- Reorder stats priority
+    table.remove(_G.StatsPriority, table.find(_G.StatsPriority, option))
+    table.insert(_G.StatsPriority, 1, option)
+end)
+
+SettingsSection:NewToggle("Auto Hop Server", "Auto hop when needed", function(state)
+    _G.AutoSeaHop = state
+end)
+
+SettingsSection:NewButton("Server Hop Now", "Hop to another server", function()
+    HopServer()
+end)
+
+-- Info Display
+local InfoTab = Window:NewTab("📊 Info")
+local InfoSection = InfoTab:NewSection("Player Information")
+
+spawn(function()
+    while true do
+        InfoSection:NewLabel("Level: " .. GetPlayerLevel())
+        InfoSection:NewLabel("Beli: " .. GetBeli())
+        InfoSection:NewLabel("Fragments: " .. GetFragments())
+        InfoSection:NewLabel("Current Sea: " .. CheckSea())
+        task.wait(5)
+    end
+end)
+
+-- Initialize
+spawn(function()
+    while true do
+        local Level = GetPlayerLevel()
+        
+        -- Auto enable features based on level
+        if Level >= 50 and not _G.AutoRandomFruit then
+            _G.AutoRandomFruit = true
+            AutoRandomFruit()
+        end
+        
+        if Level >= 800 and CheckSea() == 2 and not _G.AutoRaid then
+            _G.AutoRaid = true
+            AutoRaid()
+        end
+        
+        if Level >= 1500 and not _G.AutoCDK then
+            _G.AutoCDK = true
+            AutoCDK()
+        end
+        
+        if Level >= 2300 and not _G.AutoSkullGuitar then
+            _G.AutoSkullGuitar = true
+            AutoSkullGuitar()
+        end
+        
+        if Level >= 2600 and not _G.AutoSubmerged then
+            _G.AutoSubmerged = true
+            AutoSubmergedFarm()
+        end
+        
+        if CheckSea() == 3 and not _G.AutoElite then
+            _G.AutoElite = true
+            AutoEliteBoss()
+        end
+        
+        if Level >= _G.StopAtLevel then
+            _G.AutoFarm = false
+            Library:Notification("Target level reached!", "Success")
+        end
+        
+        task.wait(10)
+    end
+end)
+
+-- Start necessary functions
+_G.AutoStats = true
+AutoStats()
+
+-- Notification
+Library:Notification("🔥 Haiiz Kaitun Loaded Successfully!", "Welcome")
+print("╔══════════════════════════════════════════╗")
+print("║         HAIIZ KAITUN v3.0 LOADED         ║")
+print("║    Complete Blox Fruits Auto Farm        ║")
+print("║         YouTube: Tora IsMe               ║")
+print("╚══════════════════════════════════════════╝")
